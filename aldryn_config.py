@@ -14,14 +14,14 @@ class Form(forms.BaseForm):
     )
     rewrite_domain_format = forms.CharField(
         'Default url format for auto populated domain. '
-        'The default is "{}.divio.me".'
+        'The default is "{}.divio.me". '
         'Override it with the '
         'DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT environment variable.',
         initial='{}.divio.me',
         required=False,
     )
     auto_populate_sites = forms.CheckboxField(
-        'Auto populate the Sites in the database with values from the'
+        'Auto populate the Sites in the database with values from the '
         'DJANGO_MULTISITE_PLUS_SITES setting. Override with the '
         'DJANGO_MULTISITE_PLUS_AUTO_POPULATE_SITES environment variable.',
         initial=True,
