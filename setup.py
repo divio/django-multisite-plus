@@ -18,7 +18,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'django-multisite>=1.4.0',
-        'djangocms-multisite>=0.2.0',
+        'djangocms-multisite>=0.2.1',
         'Django>=1.8',
     ],
     classifiers=[
