@@ -10,7 +10,7 @@ class AppConfig(django.apps.AppConfig):
 
     def ready(self):
         from django.conf import settings
-        from django.db.utils import ProgrammingError
+        from django.db.utils import ProgrammingError, OperationalError
         Site = self.get_model('Site')
         try:
             if getattr(settings, 'DJANGO_MULTISITE_PLUS_AUTO_POPULATE_SITES', True):
@@ -26,7 +26,11 @@ class AppConfig(django.apps.AppConfig):
                 print('Syncing multisite.Alias based on Sites')
                 from multisite.models import Alias
                 Alias.canonical.sync_all()
-        except ProgrammingError:
+        except (ProgrammingError, OperationalError):
+            # ProgrammingError:
             # database is not ready yet. Maybe we're in the migrate
             # management command.
+            # OperationalError:
+            # Many parallel processes might have created deadlocks, e.g when
+            # starting up uwsgi with many workers.
             pass
