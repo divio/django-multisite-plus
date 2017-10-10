@@ -61,7 +61,7 @@ class Form(forms.BaseForm):
         MIDDLEWARE_CLASSES.insert(
             MIDDLEWARE_CLASSES.index(
                 'cms.middleware.utils.ApphookReloadMiddleware')+1,
-            'djangocms_multisite.middlewares.CMSMultiSiteMiddleware',
+            'django_multisite_plus.middlewares.CMSMultiSiteMiddleware',
         )
 
         settings['DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS'] = env(
