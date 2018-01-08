@@ -21,7 +21,7 @@ we're using ``xip.io`` a service that returns the ip in the name for any domain 
 Alternatively you could create an entry in ``/etc/hosts`` for every domain you want to support and point
 it to your local ip. Or have a local proxy that handles name resolution.
 
-The ``DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT`` environment variable controls whether the domain names
+The ``DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS`` environment variable controls whether the domain names
 are re-written based on ``DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT`` on every app startup. Set it to
 ``True`` for local development and test servers. Set it to ``False`` for the live server to use the real domains.
 
