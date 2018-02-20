@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             name='Site',
             fields=[
                 ('site', models.OneToOneField(related_name='multisiteplus_site', primary_key=True, serialize=False, to='sites.Site')),
-                ('real_domain', models.CharField(default=b'', help_text='The real (live) domain for this site.', max_length=255, verbose_name='real domain', blank=True)),
-                ('slug', models.CharField(default=b'', max_length=255, blank=True, help_text='Used on localdev and stage servers to build the domain together with the DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT setting.', unique=True, verbose_name='slug')),
+                ('real_domain', models.CharField(default='', help_text='The real (live) domain for this site.', max_length=255, verbose_name='real domain', blank=True)),
+                ('slug', models.CharField(default='', max_length=255, blank=True, help_text='Used on localdev and stage servers to build the domain together with the DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT setting.', unique=True, verbose_name='slug')),
             ],
         ),
         migrations.CreateModel(

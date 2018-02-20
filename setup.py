@@ -4,7 +4,6 @@ from setuptools import find_packages, setup
 
 from django_multisite_plus import __version__
 
-
 setup(
     name='django-multisite-plus',
     version=__version__,
@@ -17,9 +16,13 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
+        'Django>=1.8,<2.0',
         'django-multisite>=1.4.0',
-        'djangocms-multisite>=0.2.1',
-        'Django>=1.8',
+        'djangocms-multisite>=0.2.2',  # Note: this is divio/djangocms-multisite, not nephila/djangocms-multisite
+
+        'aldryn_addons',
+        'click',
+        'yurl',
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -39,4 +42,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-)
+    entry_points='''
+        [console_scripts]
+        django-multisite-plus=django_multisite_plus.cli:main
+    ''',)

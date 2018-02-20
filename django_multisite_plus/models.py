@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.db import models, transaction
+
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+
+import django.contrib.sites.models
 
 
 def domain_for_slug(slug, domain_format=None):
@@ -31,7 +34,6 @@ class SiteManager(models.Manager):
             site_id = data.get('id')
             real_domain = data.get('real_domain')
             name = data.get('name')
-            aliases = data.get('aliases')
 
             contrib_site_defaults = {}
             site_defaults = {'slug': slug}
@@ -45,10 +47,29 @@ class SiteManager(models.Manager):
                 # A site_id was given. Use it as the primary identifier.
                 try:
                     contrib_site = django.contrib.sites.models.Site.objects.get(id=site_id)
+                    contrib_site_updated_fields = set()
                     for key, value in contrib_site_defaults.items():
-                        setattr(contrib_site, key, value)
-                    contrib_site.save()
-                    site, created = Site.objects.update_or_create(site=contrib_site, defaults=site_defaults)
+                        if getattr(contrib_site, key) != value:
+                            setattr(contrib_site, key, value)
+                            contrib_site_updated_fields.add(key)
+                    if contrib_site_updated_fields:
+                        contrib_site.save(update_fields=contrib_site_updated_fields)
+                    # We're not using update_or_create here to make sure
+                    # last_updated_at does not get bumped if nothing changed.
+                    # Otherwise uwsgi would keep reloading all wsgi processes
+                    # (in multi-porcess mode) because it thinks the config has
+                    # changed.
+                    site, created = Site.objects.get_or_create(site=contrib_site, defaults=site_defaults)
+                    if not created:
+                        updated_fields = set()
+                        for key, value in site_defaults.items():
+                            if getattr(site, key) != value:
+                                setattr(site, key, value)
+                                updated_fields.add(key)
+                        if updated_fields or contrib_site_updated_fields:
+                            updated_fields.add('last_updated_at')
+                            site.save(update_fields=updated_fields)
+
                 except django.contrib.sites.models.Site.DoesNotExist:
                     domain = domain_for_slug(slug)
                     contrib_site = (
@@ -73,13 +94,21 @@ class SiteManager(models.Manager):
                     .first()
                 )
                 if contrib_site:
+                    updated_fields = set()
                     for key, value in contrib_site_defaults.items():
-                        setattr(contrib_site, key, value)
-                    contrib_site.save()
+                        if getattr(contrib_site, key) != value:
+                            setattr(contrib_site, key, value)
+                            updated_fields.add(key)
+                    if updated_fields:
+                        contrib_site.save()
                     site = contrib_site.multisiteplus_site
+                    contrib_site_updated_fields = set()
                     for key, value in site_defaults.items():
-                        setattr(site, key, value)
-                    site.save()
+                        if getattr(site, key) != value:
+                            setattr(site, key, value)
+                            contrib_site_updated_fields.add(key)
+                    if contrib_site_updated_fields:
+                        site.save(update_fields=contrib_site_updated_fields)
                 else:
                     domain = domain_for_slug(slug)
                     contrib_site = (
@@ -94,7 +123,6 @@ class SiteManager(models.Manager):
                         slug=slug,
                         real_domain=real_domain or '',
                     )
-            # FIXME: aliases
 
 
 @python_2_unicode_compatible
@@ -102,7 +130,7 @@ class Site(models.Model):
     """
     This is a extension of django.contrib.sites.Site that holds extra
     information to ease multisite local and stage development/
-    It holds the domain for the production version of the website and a slug 
+    It holds the domain for the production version of the website and a slug
     for every Site, which is used for local development and stage
     servers (any server not using the real domains) to automatically build
     domains for every Site (e.g siteslug.dev.example.com).
@@ -135,6 +163,14 @@ class Site(models.Model):
         ),
         unique=True,
     )
+    is_enabled = models.BooleanField(
+        default=True,
+        help_text=_(
+            'Whether this site should be served and available.'
+        )
+    )
+    last_updated_at = models.DateTimeField(auto_now=True)
+    extra_uwsgi_ini = models.TextField(blank=True, default='')
 
     objects = SiteManager()
 
@@ -156,8 +192,13 @@ class Site(models.Model):
         else:
             return self.real_domain
 
-    def update_site(self):
-        domain = self.domain
+    def update_site(self, use_real_domain=None):
+        if use_real_domain is None:
+            use_real_domain = getattr(settings, 'DJANGO_MULTISITE_PLUS_USE_REAL_DOMAIN', False)
+        if use_real_domain:
+            domain = self.real_domain
+        else:
+            domain = self.domain
         site = self.site
         if domain != site.domain:
             site.domain = domain
@@ -168,7 +209,6 @@ class Site(models.Model):
         self.update_site()
 
 
-import django.contrib.sites.models
 class DjangoContribSite(django.contrib.sites.models.Site):
     class Meta:
         proxy = True
