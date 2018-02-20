@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from aldryn_addons.exceptions import ImproperlyConfigured
 from aldryn_client import forms
 
 
@@ -86,7 +85,7 @@ class Form(forms.BaseForm):
         elif mode == 'multi-process':
             self.multi_process_settings(settings)
         else:
-            raise ImproperlyConfigured(
+            raise RuntimeError(
                 (
                     'DJANGO_MULTISITE_PLUS_MODE must be either single-process '
                     'or multi-process. Not {}'
