@@ -108,6 +108,22 @@ except Exception as exc:
     print('Failed to warm up process with initial request.')
 ```
 
+## Multi-process tips
+
+### Adding extra params to the vassals on a domain-level
+
+Now the <Site> model can carry additional configurations to be used on vassal/socket INI file. For example, one change the number of workers for a given <Site> by simply:
+
+```python
+from django_multisite_plus.models import Site
+site = Site.objects.get(id=XXXXX)
+site.extra_uwsgi_ini = '''
+workers = 5
+'''
+site.save()
+```
+
+Please note that those change will take effect only after a server restart.
 
 ## Future package structure
 
