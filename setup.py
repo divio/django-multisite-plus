@@ -22,6 +22,7 @@ setup(
 
         'aldryn_addons',
         'click',
+        'psycopg2>=2.5',
         'yurl',
     ],
     classifiers=[

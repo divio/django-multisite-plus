@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 import os
+import shutil
 import subprocess
 import sys
 
@@ -8,6 +9,7 @@ from aldryn_addons.utils import boolean_ish
 from aldryn_django.cli import main, execute, web as single_process_web
 
 import click
+import psycopg2
 import yurl
 
 from django_multisite_plus import conf
@@ -17,25 +19,35 @@ BASE_DIR = os.getcwd()
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 
+# Below we use the domain hash in order to avoid filename length errors (uwsgi allows only 102 chars)
 VASSALS_SQL_QUERY = ' '.join([x.strip() for x in '''
 SELECT
-    STRING_AGG(ma.domain, '{alias_separator}')||'.ini' ini_filename,
+    MD5(ds.domain)||'.ini' ini_filename,
     CONCAT_WS(E'\\n',
         '[uwsgi]',
         'env = SITE_ID='||ds.id,
-        'socket = {base_sockets_dir}'||STRING_AGG(ma.domain, '{alias_separator}')||'.sock',
+        'socket = {base_sockets_dir}'||MD5(ds.domain)||'.sock',
         ms.extra_uwsgi_ini
     ) ini_content,
     EXTRACT('epoch' from ms.last_updated_at) last_updated
 FROM
     django_multisite_plus_site AS ms
     INNER JOIN django_site as ds ON (ds.id = ms.site_id)
-    INNER JOIN multisite_alias AS ma ON (ma.site_id = ms.site_id)
 WHERE
     ms.is_enabled = TRUE
 GROUP BY
     ds.id, ms.extra_uwsgi_ini, ms.last_updated_at;
-'''.format(alias_separator=UWSGI_ALIAS_SEPARATOR, base_sockets_dir=conf.UWSGI_BASE_SOCKETS_DIR).splitlines()])
+'''.format(base_sockets_dir=conf.UWSGI_BASE_SOCKETS_DIR).splitlines()])
+
+
+ALIAS_DOMAIN_MAPPING_QUERY = '''
+SELECT
+    alias.domain AS origin_domain,
+    site.domain AS destination_domain
+FROM
+    multisite_alias AS alias
+    INNER JOIN django_site AS site ON (alias.site_id = site.id)
+'''
 
 
 @main.command()
@@ -155,7 +167,13 @@ def assert_uwsgi_plugin_is_installed(plugin):
 
 def start_uwsgi_command(settings, port=None):
     def _create_working_dirs():
-        for path in (conf.UWSGI_BASE_CONFIG_DIR, conf.UWSGI_BASE_SOCKETS_DIR):
+        for path in (conf.UWSGI_BASE_CONFIG_DIR, conf.UWSGI_BASE_SOCKETS_DIR, conf.UWSGI_ALIAS_DOMAIN_MAPPING_DIR):
+            # Ensure tree is clean before creating the working dirs (in order to avoid orphan vassal sockets)
+            try:
+                shutil.rmtree(path)
+            except OSError:
+                pass
+
             try:
                 os.makedirs(path)
             except OSError:
@@ -170,11 +188,28 @@ def start_uwsgi_command(settings, port=None):
         with open(uwsgi_config_file_path, 'w') as cfg_file:
             cfg_file.write('\n'.join(ini))
 
+    def _create_alias_domain_mapping_helper_files(settings):
+        # We are spawning 1 uwsgi process per SITE, not per DOMAIN/ALIAS, so we need to map aliases to a proper domain.
+        # Here we create a bunch of helper files with filename like "alias|domain" so we can use it as a lookup later.
+        db_kwargs = settings['DATABASES']['default']
+        connection_string = "dbname='{NAME}' user='{USER}' host='{HOST}' password='{PASSWORD}'".format(**db_kwargs)
+
+        with psycopg2.connect(connection_string) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(ALIAS_DOMAIN_MAPPING_QUERY)
+                alias_domain_mapping = dict(cursor.fetchall())
+
+        alias_domain_mapping_dir = conf.UWSGI_ALIAS_DOMAIN_MAPPING_DIR
+        for alias, domain in alias_domain_mapping.items():
+            filepath = os.path.join(alias_domain_mapping_dir, UWSGI_ALIAS_SEPARATOR.join([alias, domain]))
+            open(filepath, 'w').close()
+
     uwsgi_config_file_path = os.path.join(conf.UWSGI_BASE_CONFIG_DIR, 'config.ini')
 
     # see 'required uwsgi plugins' in README for details about the uwsgi plugin
     assert_uwsgi_plugin_is_installed('emperor_pg')
     _create_working_dirs()
+    _create_alias_domain_mapping_helper_files(settings)
     _create_uwsgi_config_file(settings, port, uwsgi_config_file_path)
 
     return [

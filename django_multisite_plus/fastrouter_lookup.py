@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 import glob
+import hashlib
 import logging
 import os
 
@@ -12,16 +13,17 @@ logger = logging.getLogger(__name__)
 
 def get(key_as_bytes):
     def _get_socket(key):
-        sockets = glob.glob(os.path.join(conf.UWSGI_BASE_SOCKETS_DIR, '*{}*.sock'.format(key)))
-        sockets = list(filter(
-            lambda x: key in os.path.splitext(os.path.basename(x))[0].split(UWSGI_ALIAS_SEPARATOR),
-            sockets
-        ))
+        filepath = os.path.join(conf.UWSGI_ALIAS_DOMAIN_MAPPING_DIR, '{}{}*'.format(key, UWSGI_ALIAS_SEPARATOR))
+        sockets = glob.glob(filepath)
 
         if len(sockets) > 1:
             raise RuntimeError('Multiple sockets found for key="{}" (found: "{}")'.format(key, ", ".join(sockets)))
         elif len(sockets) == 1:
-            return sockets[0].encode('utf-8')
+            matched_domain = os.path.basename(sockets[0]).split(UWSGI_ALIAS_SEPARATOR)[1]
+            # Below we use the domain hash in order to avoid filename length errors (uwsgi allows only 102 chars)
+            matched_domain_hash = hashlib.md5(matched_domain.encode('utf-8')).hexdigest()
+            socket_path = os.path.join(conf.UWSGI_BASE_SOCKETS_DIR, '{}.sock'.format(matched_domain_hash))
+            return socket_path.encode('utf-8')
         else:
             return None
 
