@@ -3,6 +3,12 @@ Changelog
 =========
 
 
+0.6.1 (2018-08-01)
+================
+
+* Fix issues due to [filename length constraint on uwsgi](https://github.com/unbit/uwsgi/blob/master/core/socket.c#L178-L182)
+
+
 0.6.0 (2018-02-20)
 ================
 
