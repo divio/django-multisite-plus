@@ -3,6 +3,13 @@ Changelog
 =========
 
 
+0.6.2 (2018-08-03)
+================
+
+* Add multisite lib on addon.json
+* Prevent (meaningless) OSError from killing workers/vassals
+
+
 0.6.1 (2018-08-01)
 ================
 
