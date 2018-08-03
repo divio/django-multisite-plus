@@ -86,6 +86,9 @@ def get_uwsgi_regular_opts(settings, port):
         'lazy-apps = true',
         'honour-range = true',
         'enable-threads = true',
+        'ignore-sigpipe = true',
+        'ignore-write-errors = true',
+        'disable-write-exception = true',
     ]
 
 
