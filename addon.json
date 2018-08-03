@@ -1,4 +1,6 @@
 {
     "package-name": "django-multisite-plus",
-    "installed-apps": []
+    "installed-apps": [
+        "multisite"
+    ]
 }
