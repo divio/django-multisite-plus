@@ -75,7 +75,7 @@ class SiteAdmin(DjangoSiteAdmin):
     )
     fieldsets = (
         (None, {'fields': (
-            ('domain', 'linked_url'),
+            ('domain', 'linked_url', 'name'),
         )}),
     )
     inlines = [
@@ -96,7 +96,7 @@ class SiteAdmin(DjangoSiteAdmin):
     def get_readonly_fields(self, request, obj=None):
         if not settings.DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS:
             return super(SiteAdmin, self).get_readonly_fields(request, obj)
-        return ['domain', 'linked_url']
+        return ['domain', 'linked_url', 'name']
 
     def get_queryset(self, request):
         qs = super(SiteAdmin, self).get_queryset(request)
