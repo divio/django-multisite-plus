@@ -2,17 +2,16 @@
 # -*- coding: utf-8 -*-
 from setuptools import find_packages, setup
 
-from django_multisite_plus import __version__
-
 setup(
     name='django-multisite-plus',
-    version=__version__,
+    version='0.6.3',
     author='Divio AG',
     author_email='info@divio.com',
     url='https://github.com/divio/django-multisite-plus',
     license='BSD',
     description='An extension to django-multisite that eases local development.',
-    packages=find_packages(),
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
     install_requires=[
