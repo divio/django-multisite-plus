@@ -1,14 +1,13 @@
 [tool.coverage.run]
 branch = true
-source = ["django_multisite_plus"]
+source = ["src/django_multisite_plus", "./tests"]
 data_file = ".artifacts/coverage"
 
 [tool.coverage.paths]
 source = [
-    "src/django_multisite_plus",
-    "~/.toxenvs/django-multisite-plus/*/lib*/python*/site-packages/django_multisite_plus",
+    "src",
+    "~/.toxenvs/django-multisite-plus/*/lib*/python*/site-packages",
 ]
-
 
 [tool.coverage.report]
 precision = 1
@@ -18,3 +17,7 @@ precision = 1
 directory = ".artifacts/htmlcov"
 show_contexts = true
 skip_covered = false
+
+[tool.pytest.ini_options]
+pythonpath = "./tests"
+addopts = "-rxs --import-mode=importlib --cov-report= --cov=django_multisite_plus --cov=tests"

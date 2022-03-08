@@ -3,3 +3,4 @@ include CHANGELOG.rst
 include addon.json
 include aldryn_config.py
 include tox.ini
+prune tests
