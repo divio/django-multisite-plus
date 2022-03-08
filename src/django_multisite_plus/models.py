@@ -10,18 +10,17 @@ import django.contrib.sites.models
 
 def domain_for_slug(slug, domain_format=None):
     domain_format = domain_format or getattr(
-        settings, 'DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT', ''
+        settings, "DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT", ""
     )
     return domain_format.format(slug)
 
 
 class SiteManager(models.Manager):
-
     @transaction.atomic()
     def update_sites(self):
         sites = (
-            self.select_related('site')
-            .only('site', 'real_domain', 'slug')
+            self.select_related("site")
+            .only("site", "real_domain", "slug")
             .select_for_update()
         )
         for site in sites:
@@ -29,24 +28,26 @@ class SiteManager(models.Manager):
 
     @transaction.atomic()
     def auto_populate_sites(self):
-        sites_config = getattr(settings, 'DJANGO_MULTISITE_PLUS_SITES', {})
+        sites_config = getattr(settings, "DJANGO_MULTISITE_PLUS_SITES", {})
         for slug, data in sites_config.items():
-            site_id = data.get('id')
-            real_domain = data.get('real_domain')
-            name = data.get('name')
+            site_id = data.get("id")
+            real_domain = data.get("real_domain")
+            name = data.get("name")
 
             contrib_site_defaults = {}
-            site_defaults = {'slug': slug}
+            site_defaults = {"slug": slug}
 
             if real_domain:
-                site_defaults['real_domain'] = real_domain
+                site_defaults["real_domain"] = real_domain
             if name:
-                contrib_site_defaults['name'] = name
+                contrib_site_defaults["name"] = name
 
             if site_id:
                 # A site_id was given. Use it as the primary identifier.
                 try:
-                    contrib_site = django.contrib.sites.models.Site.objects.get(id=site_id)
+                    contrib_site = django.contrib.sites.models.Site.objects.get(
+                        id=site_id
+                    )
                     contrib_site_updated_fields = set()
                     for key, value in contrib_site_defaults.items():
                         if getattr(contrib_site, key) != value:
@@ -59,7 +60,9 @@ class SiteManager(models.Manager):
                     # Otherwise uwsgi would keep reloading all wsgi processes
                     # (in multi-porcess mode) because it thinks the config has
                     # changed.
-                    site, created = Site.objects.get_or_create(site=contrib_site, defaults=site_defaults)
+                    site, created = Site.objects.get_or_create(
+                        site=contrib_site, defaults=site_defaults
+                    )
                     if not created:
                         updated_fields = set()
                         for key, value in site_defaults.items():
@@ -67,18 +70,15 @@ class SiteManager(models.Manager):
                                 setattr(site, key, value)
                                 updated_fields.add(key)
                         if updated_fields or contrib_site_updated_fields:
-                            updated_fields.add('last_updated_at')
+                            updated_fields.add("last_updated_at")
                             site.save(update_fields=updated_fields)
 
                 except django.contrib.sites.models.Site.DoesNotExist:
                     domain = domain_for_slug(slug)
-                    contrib_site = (
-                        django.contrib.sites.models.Site.objects
-                        .create(
-                            id=site_id,
-                            domain=domain,
-                            name=name or domain,
-                        )
+                    contrib_site = django.contrib.sites.models.Site.objects.create(
+                        id=site_id,
+                        domain=domain,
+                        name=name or domain,
                     )
                     site = Site.objects.create(
                         site=contrib_site,
@@ -88,9 +88,10 @@ class SiteManager(models.Manager):
             else:
                 # No site_id was given. Use slug as the primary identifier.
                 contrib_site = (
-                    django.contrib.sites.models.Site.objects
-                    .filter(multisiteplus_site__slug=slug)
-                    .prefetch_related('multisiteplus_site')
+                    django.contrib.sites.models.Site.objects.filter(
+                        multisiteplus_site__slug=slug
+                    )
+                    .prefetch_related("multisiteplus_site")
                     .first()
                 )
                 if contrib_site:
@@ -111,17 +112,14 @@ class SiteManager(models.Manager):
                         site.save(update_fields=contrib_site_updated_fields)
                 else:
                     domain = domain_for_slug(slug)
-                    contrib_site = (
-                        django.contrib.sites.models.Site.objects
-                        .create(
-                            domain=domain,
-                            name=name or domain,
-                        )
+                    contrib_site = django.contrib.sites.models.Site.objects.create(
+                        domain=domain,
+                        name=name or domain,
                     )
                     site = Site.objects.create(
                         site=contrib_site,
                         slug=slug,
-                        real_domain=real_domain or '',
+                        real_domain=real_domain or "",
                     )
 
 
@@ -139,52 +137,48 @@ class Site(models.Model):
     from one system to another and have the correct Site objects when running
     the project.
     """
+
     site = models.OneToOneField(
-        'sites.Site',
-        related_name='multisiteplus_site',
+        "sites.Site",
+        related_name="multisiteplus_site",
         primary_key=True,
     )
     real_domain = models.CharField(
-        _('real domain'),
+        _("real domain"),
         max_length=255,
-        blank=True, default='',
-        help_text=_(
-            'The real (live) domain for this site.'
-        ),
+        blank=True,
+        default="",
+        help_text=_("The real (live) domain for this site."),
     )
     slug = models.CharField(
         # FIXME: validation
-        _('slug'),
+        _("slug"),
         max_length=255,
-        blank=True, default='',
+        blank=True,
+        default="",
         help_text=_(
-            'Used on localdev and stage servers to build the domain together '
-            'with the DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT setting.'
+            "Used on localdev and stage servers to build the domain together "
+            "with the DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT setting."
         ),
         unique=True,
     )
     is_enabled = models.BooleanField(
-        default=True,
-        help_text=_(
-            'Whether this site should be served and available.'
-        )
+        default=True, help_text=_("Whether this site should be served and available.")
     )
     last_updated_at = models.DateTimeField(auto_now=True)
-    extra_uwsgi_ini = models.TextField(blank=True, default='')
+    extra_uwsgi_ini = models.TextField(blank=True, default="")
 
     objects = SiteManager()
 
     def __str__(self):
-        return force_text('{} ({})'.format(self.real_domain, self.slug))
+        return force_text("{} ({})".format(self.real_domain, self.slug))
 
     def get_url(self):
-        return '//{}'.format(self.domain)
+        return "//{}".format(self.domain)
 
     @property
     def domain(self):
-        rewrite = getattr(
-            settings, 'DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS', False
-        )
+        rewrite = getattr(settings, "DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS", False)
         if rewrite:
             return domain_for_slug(self.slug)
         elif not self.real_domain:
@@ -194,7 +188,9 @@ class Site(models.Model):
 
     def update_site(self, use_real_domain=None):
         if use_real_domain is None:
-            use_real_domain = getattr(settings, 'DJANGO_MULTISITE_PLUS_USE_REAL_DOMAIN', False)
+            use_real_domain = getattr(
+                settings, "DJANGO_MULTISITE_PLUS_USE_REAL_DOMAIN", False
+            )
         if use_real_domain:
             domain = self.real_domain
         else:
@@ -212,5 +208,5 @@ class Site(models.Model):
 class DjangoContribSite(django.contrib.sites.models.Site):
     class Meta:
         proxy = True
-        verbose_name = _('Site')
-        verbose_name_plural = _('Sites')
+        verbose_name = _("Site")
+        verbose_name_plural = _("Sites")
