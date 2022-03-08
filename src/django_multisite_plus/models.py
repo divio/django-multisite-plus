@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-from django.utils.encoding import force_text, python_2_unicode_compatible
+from django.utils.encoding import force_str
 from django.db import models, transaction
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import django.contrib.sites.models
 
@@ -123,7 +122,6 @@ class SiteManager(models.Manager):
                     )
 
 
-@python_2_unicode_compatible
 class Site(models.Model):
     """
     This is a extension of django.contrib.sites.Site that holds extra
@@ -142,6 +140,7 @@ class Site(models.Model):
         "sites.Site",
         related_name="multisiteplus_site",
         primary_key=True,
+        on_delete=models.CASCADE,
     )
     real_domain = models.CharField(
         _("real domain"),
@@ -171,7 +170,7 @@ class Site(models.Model):
     objects = SiteManager()
 
     def __str__(self):
-        return force_text("{} ({})".format(self.real_domain, self.slug))
+        return force_str("{} ({})".format(self.real_domain, self.slug))
 
     def get_url(self):
         return "//{}".format(self.domain)

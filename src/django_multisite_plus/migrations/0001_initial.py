@@ -22,6 +22,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="sites.Site",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 (

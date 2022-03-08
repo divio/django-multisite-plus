@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, unicode_literals
 import sys
 
-# Py2 and Py3 compatible reload
 from imp import reload
 
 from django.conf import settings

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
 import os
 import shutil
 import subprocess
@@ -80,7 +78,7 @@ def get_uwsgi_static_serving_opts(base_url, root, header_patterns):
         pattern = os.path.join("^", base_path, pattern)
         for k, v in headers.items():
             opts.append("route = {} addheader:{}: {}".format(pattern, k, v))
-        opts.append("route = {} last:".format(pattern, k, v))
+        opts.append("route = {} last:".format(pattern))
 
     return opts
 

@@ -8,6 +8,7 @@ Next version (unreleased)
 
 * Add testing support via tox + docker/tox-docker + pytest.
 * Move to ``src``-based project layout.
+* Add initial compatibility with Django 2.2, 3.0, and 4.0.
 
 
 0.6.3 (2018-10-18)

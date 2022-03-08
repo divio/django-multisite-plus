@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.conf.urls import include
 from djangocms_multisite.urlresolvers import cms_multisite_url
 

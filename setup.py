@@ -15,7 +15,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        "django",
+        "django>=2",
         "django-multisite>=1.4.0",
         "djangocms-multisite>=0.2.2",  # Note: this is divio/djangocms-multisite, not nephila/djangocms-multisite
         "aldryn_addons",
