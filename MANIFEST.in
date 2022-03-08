@@ -1,5 +1,5 @@
 include LICENSE
-recursive-include */boilerplates *
-recursive-include */templates *
-recursive-include */static *
-recursive-include */locale *
+include CHANGELOG.rst
+include addon.json
+include aldryn_config.py
+include tox.ini
