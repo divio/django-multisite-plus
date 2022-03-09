@@ -18,6 +18,7 @@ setup(
         "django>=2",
         "django-multisite>=1.4.0",
         "djangocms-multisite>=0.2.2",  # Note: this is divio/djangocms-multisite, not nephila/djangocms-multisite
+        "aldryn-django",
         "aldryn_addons",
         "click",
         "psycopg2>=2.5",
