@@ -1,3 +1,10 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
 [tool.coverage.run]
 branch = true
 source = ["src/django_multisite_plus", "./tests"]
