@@ -14,16 +14,14 @@ from djangocms_multisite import middleware
 
 
 class CMSMultiSiteMiddleware(middleware.CMSMultiSiteMiddleware):
-
     def process_request(self, request):
         super(CMSMultiSiteMiddleware, self).process_request(request)
 
-        if 'django_multisite_plus.cms_urls' in sys.modules:
-            reload(sys.modules['django_multisite_plus.cms_urls'])
+        if "django_multisite_plus.cms_urls" in sys.modules:
+            reload(sys.modules["django_multisite_plus.cms_urls"])
 
 
 class DynamicSiteMiddleware(multisite.middleware.DynamicSiteMiddleware):
-
     def get_alias(self, netloc):
         """
         Returns Alias matching ``netloc``. Otherwise, the default site.
@@ -44,5 +42,5 @@ class DynamicSiteMiddleware(multisite.middleware.DynamicSiteMiddleware):
             alias = Alias.canonical.get(site=site_id)
         except ValueError:
             # Fallback to the first Site object
-            alias = Alias.canonical.order_by('site')[0]
+            alias = Alias.canonical.order_by("site")[0]
         return alias
