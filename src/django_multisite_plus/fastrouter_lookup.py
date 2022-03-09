@@ -6,6 +6,7 @@ import os
 from django_multisite_plus import conf
 from django_multisite_plus.constants import UWSGI_ALIAS_SEPARATOR
 
+
 logger = logging.getLogger(__name__)
 
 

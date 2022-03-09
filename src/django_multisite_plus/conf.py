@@ -2,6 +2,7 @@ import os
 
 from aldryn_addons.utils import boolean_ish
 
+
 env = os.environ.get
 
 UWSGI_DEFAULT_DOMAIN = env("DJANGO_MULTISITE_PLUS_UWSGI_DEFAULT_DOMAIN")

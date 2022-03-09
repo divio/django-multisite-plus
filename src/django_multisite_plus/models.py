@@ -1,10 +1,8 @@
-from django.utils.encoding import force_str
-from django.db import models, transaction
-
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-
 import django.contrib.sites.models
+from django.conf import settings
+from django.db import models, transaction
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 
 
 def domain_for_slug(slug, domain_format=None):

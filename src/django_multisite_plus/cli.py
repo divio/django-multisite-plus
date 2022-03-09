@@ -3,15 +3,16 @@ import shutil
 import subprocess
 import sys
 
-from aldryn_addons.utils import boolean_ish
-from aldryn_django.cli import main, execute, web as single_process_web
-
 import click
 import psycopg2
 import yurl
+from aldryn_addons.utils import boolean_ish
+from aldryn_django.cli import execute, main
+from aldryn_django.cli import web as single_process_web
 
 from django_multisite_plus import conf
 from django_multisite_plus.constants import UWSGI_ALIAS_SEPARATOR
+
 
 BASE_DIR = os.getcwd()
 HERE = os.path.dirname(os.path.abspath(__file__))

@@ -1,6 +1,6 @@
-import pytest
-
 from django.contrib.sites.models import Site
+
+import pytest
 
 from django_multisite_plus import models
 

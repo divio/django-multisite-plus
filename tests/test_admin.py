@@ -1,1 +1,1 @@
-from django_multisite_plus import admin
+from django_multisite_plus import admin  # NOQA

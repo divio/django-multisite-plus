@@ -48,7 +48,8 @@ class Form(forms.BaseForm):
         # createcachetable) we ignore multisite.
         # TODO: find solutions upstream in django-multisite to prevent this
         #       awkward CACHE_URL "if" situation.
-        from aldryn_addons.utils import djsenv as env, boolean_ish
+        from aldryn_addons.utils import boolean_ish
+        from aldryn_addons.utils import djsenv as env
 
         DJANGO_MODE = env("DJANGO_MODE")
         if DJANGO_MODE == "build" and settings["CACHE_URL"] == "locmem://":
