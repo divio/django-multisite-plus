@@ -1,7 +1,8 @@
 [build-system]
 requires = [
     "setuptools>=42",
-    "wheel"
+    "setuptools_scm[toml]>=6.2",
+    "wheel",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -42,3 +43,5 @@ multi_line_output = 3
 overwrite_in_place = true
 known_django = ["django"]
 sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+[tool.setuptools_scm]

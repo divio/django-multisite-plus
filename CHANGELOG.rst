@@ -9,6 +9,9 @@ Next version (unreleased)
 * Add testing support via tox + docker/tox-docker + pytest.
 * Move to ``src``-based project layout.
 * Add initial compatibility with Django 2.2, 3.0, and 4.0.
+* Add linting checks for isort and flake8.
+* Move to PEP-517/PEP-518 distribution format.
+* Use ``setuptools-scm`` for versioning.
 
 
 0.6.3 (2018-10-18)
