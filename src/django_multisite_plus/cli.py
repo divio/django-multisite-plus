@@ -1,19 +1,18 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
 import os
 import shutil
 import subprocess
 import sys
 
-from aldryn_addons.utils import boolean_ish
-from aldryn_django.cli import main, execute, web as single_process_web
-
 import click
 import psycopg2
 import yurl
+from aldryn_addons.utils import boolean_ish
+from aldryn_django.cli import execute, main
+from aldryn_django.cli import web as single_process_web
 
 from django_multisite_plus import conf
 from django_multisite_plus.constants import UWSGI_ALIAS_SEPARATOR
+
 
 BASE_DIR = os.getcwd()
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -80,7 +79,7 @@ def get_uwsgi_static_serving_opts(base_url, root, header_patterns):
         pattern = os.path.join("^", base_path, pattern)
         for k, v in headers.items():
             opts.append("route = {} addheader:{}: {}".format(pattern, k, v))
-        opts.append("route = {} last:".format(pattern, k, v))
+        opts.append("route = {} last:".format(pattern))
 
     return opts
 

@@ -5,9 +5,15 @@ import secrets
 SECRET_KEY = secrets.token_urlsafe(48)
 
 INSTALLED_APPS = [
+    "django.contrib.auth",
+    "django.contrib.admin",
+    "django.contrib.contenttypes",
     "django.contrib.sites",
+    "multisite",
     "django_multisite_plus",
 ]
+
+SITE_ID = 1
 
 ROOT_URLCONF = "testproject.urls"
 
@@ -20,3 +26,5 @@ DATABASES = {
         "PORT": os.environ["POSTGRES_5432_TCP_PORT"],
     }
 }
+
+DJANGO_MULTISITE_PLUS_MODE = "single-process"

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
 import django.apps
 
 
@@ -10,7 +8,7 @@ class AppConfig(django.apps.AppConfig):
 
     def ready(self):
         from django.conf import settings
-        from django.db.utils import ProgrammingError, OperationalError
+        from django.db.utils import OperationalError, ProgrammingError
 
         Site = self.get_model("Site")
         try:

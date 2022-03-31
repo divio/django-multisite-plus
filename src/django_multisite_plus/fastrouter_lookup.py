@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
 import glob
 import hashlib
 import logging
@@ -7,6 +5,7 @@ import os
 
 from django_multisite_plus import conf
 from django_multisite_plus.constants import UWSGI_ALIAS_SEPARATOR
+
 
 logger = logging.getLogger(__name__)
 

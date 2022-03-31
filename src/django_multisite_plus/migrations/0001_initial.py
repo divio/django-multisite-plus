@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import migrations, models
 import django.contrib.sites.models
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
@@ -22,6 +22,7 @@ class Migration(migrations.Migration):
                         primary_key=True,
                         serialize=False,
                         to="sites.Site",
+                        on_delete=models.CASCADE,
                     ),
                 ),
                 (

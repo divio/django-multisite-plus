@@ -1,1 +1,3 @@
-UWSGI_ALIAS_SEPARATOR = "|"  # WARNING: ',' is more intuitive but doesn't work! (uwsgi fails internally with ',')
+# WARNING: ',' is more intuitive but doesn't work!
+# uWSGI fails internally with ','.
+UWSGI_ALIAS_SEPARATOR = "|"

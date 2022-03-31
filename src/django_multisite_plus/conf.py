@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
 import os
 
 from aldryn_addons.utils import boolean_ish
+
 
 env = os.environ.get
 

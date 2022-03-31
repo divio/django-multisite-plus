@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, unicode_literals
 import sys
-
-# Py2 and Py3 compatible reload
 from imp import reload
 
 from django.conf import settings
 
 import multisite.middleware
-from multisite.models import Alias
-
 from djangocms_multisite import middleware
+from multisite.models import Alias
 
 
 class CMSMultiSiteMiddleware(middleware.CMSMultiSiteMiddleware):
