@@ -17,14 +17,15 @@ def test_domain_for_slug(settings, format, slug, expected):
 
 
 @pytest.mark.parametrize(
-    "domain,rewrite,expected", [
+    "domain,rewrite,expected",
+    [
         ("test.com", None, "test.com"),
         ("test.com", False, "test.com"),
         ("test.com", True, "slug.rewritten.com"),
         ("", None, "slug.rewritten.com"),
         ("", False, "slug.rewritten.com"),
         ("", True, "slug.rewritten.com"),
-    ]
+    ],
 )
 def test_site_domain(settings, djangosite, domain, rewrite, expected):
     settings.DJANGO_MULTISITE_PLUS_REWRITE_DOMAIN_FORMAT = "{}.rewritten.com"

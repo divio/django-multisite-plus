@@ -9,6 +9,7 @@ class AppConfig(django.apps.AppConfig):
     def ready(self):
         from django.conf import settings
         from django.core.exceptions import ImproperlyConfigured
+
         from django_multisite_plus import constants
 
         auto_populate_sites = getattr(
