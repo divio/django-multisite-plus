@@ -26,8 +26,8 @@ class AppConfig(django.apps.AppConfig):
                 )
                 Site.objects.update_sites()
                 # Make sure django-multisite is synced.
-                # Sometimes (e.g when loading fixtures) the signals don't fire and the
-                # Aliases get out of sync.
+                # Sometimes (e.g when loading fixtures) the signals don't fire
+                # and the Aliases get out of sync.
                 print("Syncing multisite.Alias based on Sites")
                 from multisite.models import Alias
 
