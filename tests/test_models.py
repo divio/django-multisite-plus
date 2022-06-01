@@ -47,3 +47,32 @@ def test_site_update_site(djangosite):
     # A second run shall have no effect
     site.update_site()
     assert djangosite.domain == "test.com"
+
+
+def test_auto_populate_sites(db, settings):
+    assert not models.Site.objects.exists()
+    settings.DJANGO_MULTISITE_PLUS_SITES = {
+        "test-site-1": {
+            "id": 1,
+            "real_domain": "real-domain-for-site-1.com",
+            "name": "Test Site 1",
+        },
+        "test-site-2": {
+            "id": 2,
+            "real_domain": "real-domain-for-site-2.com",
+        },
+    }
+
+    models.Site.objects.auto_populate_sites()
+
+    assert models.Site.objects.count() == 2
+
+    site1 = models.Site.objects.get(pk=1)
+    assert site1.slug == "test-site-1"
+    assert site1.real_domain == "real-domain-for-site-1.com"
+    assert site1.site.name == "Test Site 1"
+
+    site2 = models.Site.objects.get(pk=2)
+    assert site2.slug == "test-site-2"
+    assert site2.real_domain == "real-domain-for-site-2.com"
+    assert site2.site.name == ""
