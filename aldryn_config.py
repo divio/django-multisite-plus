@@ -115,14 +115,18 @@ class Form(forms.BaseForm):
         # multisite.middleware.DynamicSiteMiddleware must be before
         # cms.middleware.utils.ApphookReloadMiddleware
         MIDDLEWARE_CLASSES.insert(
-            MIDDLEWARE_CLASSES.index("cms.middleware.utils.ApphookReloadMiddleware"),
+            MIDDLEWARE_CLASSES.index(
+                "cms.middleware.utils.ApphookReloadMiddleware"
+            ),
             "django_multisite_plus.middlewares.DynamicSiteMiddleware",
         )
 
         # djangocms_multisite.middleware.CMSMultiSiteMiddleware must be after
         # cms.middleware.utils.ApphookReloadMiddleware
         MIDDLEWARE_CLASSES.insert(
-            MIDDLEWARE_CLASSES.index("cms.middleware.utils.ApphookReloadMiddleware")
+            MIDDLEWARE_CLASSES.index(
+                "cms.middleware.utils.ApphookReloadMiddleware"
+            )
             + 1,
             "django_multisite_plus.middlewares.CMSMultiSiteMiddleware",
         )

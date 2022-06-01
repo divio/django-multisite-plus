@@ -25,15 +25,16 @@ def get(key_as_bytes):
                 )
             )
         elif len(sockets) == 1:
-            matched_domain = os.path.basename(sockets[0]).split(UWSGI_ALIAS_SEPARATOR)[
-                1
-            ]
+            matched_domain = os.path.basename(sockets[0]).split(
+                UWSGI_ALIAS_SEPARATOR
+            )[1]
             # Below we use the domain hash in order to avoid filename length errors (uwsgi allows only 102 chars)
             matched_domain_hash = hashlib.md5(
                 matched_domain.encode("utf-8")
             ).hexdigest()
             socket_path = os.path.join(
-                conf.UWSGI_BASE_SOCKETS_DIR, "{}.sock".format(matched_domain_hash)
+                conf.UWSGI_BASE_SOCKETS_DIR,
+                "{}.sock".format(matched_domain_hash),
             )
             return socket_path.encode("utf-8")
         else:
@@ -50,7 +51,9 @@ def get(key_as_bytes):
                 )
             )
         else:
-            options = glob.glob(os.path.join(conf.UWSGI_BASE_SOCKETS_DIR, "*.sock"))
+            options = glob.glob(
+                os.path.join(conf.UWSGI_BASE_SOCKETS_DIR, "*.sock")
+            )
             fake_sockets = {
                 "localhost:8000": options[0],
                 "127.0.0.1:8000": options[1],
