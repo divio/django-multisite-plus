@@ -19,7 +19,7 @@ source = [
 
 [tool.coverage.report]
 precision = 1
-#skip_covered = true
+skip_covered = true
 
 [tool.coverage.html]
 directory = ".artifacts/htmlcov"
@@ -29,6 +29,9 @@ skip_covered = false
 [tool.pytest.ini_options]
 pythonpath = "./tests"
 addopts = "-rxs --import-mode=importlib --cov-report= --cov=django_multisite_plus --cov=tests --cov-context=test"
+
+[tool.black]
+line-length = 79
 
 [tool.isort]
 profile = "black"

@@ -12,16 +12,22 @@ class AppConfig(django.apps.AppConfig):
 
         Site = self.get_model("Site")
         try:
-            if getattr(settings, "DJANGO_MULTISITE_PLUS_AUTO_POPULATE_SITES", True):
+            if getattr(
+                settings, "DJANGO_MULTISITE_PLUS_AUTO_POPULATE_SITES", True
+            ):
                 print("Syncing django_multisite_plus Sites based on settings")
                 Site.objects.auto_populate_sites()
 
-            if getattr(settings, "DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS", True):
-                print("Rewriting django.contrib.sites.Site based on local settings")
+            if getattr(
+                settings, "DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS", True
+            ):
+                print(
+                    "Rewriting django.contrib.sites.Site based on local settings"
+                )
                 Site.objects.update_sites()
                 # Make sure django-multisite is synced.
-                # Sometimes (e.g when loading fixtures) the signals don't fire and the
-                # Aliases get out of sync.
+                # Sometimes (e.g when loading fixtures) the signals don't fire
+                # and the Aliases get out of sync.
                 print("Syncing multisite.Alias based on Sites")
                 from multisite.models import Alias
 
