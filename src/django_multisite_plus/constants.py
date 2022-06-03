@@ -40,3 +40,50 @@ ALIAS_DOMAIN_MAPPING_QUERY = clean_query(
         INNER JOIN django_site AS site ON (alias.site_id = site.id)
     """
 )
+
+
+AUTO_POPULATE_EXPLICITLY_ENABLED_ERROR_MESSAGE = """
+DJANGO_MULTISITE_PLUS_AUTO_POPULATE_SITES cannot be True
+
+You explicitly set the above setting to True and a configuration change is
+necessary to proceed. This feature has been removed in a recent version of the
+package because it was leading to race conditions when updating domains in
+`multi-process` mode. You can now achieve the same effect by executing the
+`multisite_plus_populate_sites` management command during deployment.
+""".strip()
+
+
+AUTO_POPULATE_DEFAULT_ENABLED_ERROR_MESSAGE = """
+DJANGO_MULTISITE_PLUS_AUTO_POPULATE_SITES defaults to True
+
+While the above setting has not been explicitly enabled, a previous version
+of this package was automatically populating sites on startup and a
+configuration change is necessary. This feature has been removed in a recent
+version of the package because it was leading to race conditions when updating
+domains in `multi-process` mode. You can now achieve the same effect by
+executing the `multisite_plus_populate_sites` management command during
+deployment.
+""".strip()
+
+
+AUTO_REWRITE_DOMAINS_EXPLICITLY_ENABLED_ERROR_MESSAGE = """
+DJANGO_MULTISITE_PLUS_AUTO_REWRITE_DOMAINS cannot be True
+
+You explicitly set the above setting to True and a configuration change is
+necessary to proceed. This feature has been removed in a recent version of the
+package because it was leading to race conditions when updating domains in
+`multi-process` mode. You can now achieve the same effect by executing the
+`multisite_plus_rewrite_domains` management command during deployment.
+""".strip()
+
+
+AUTO_REWRITE_DOMAINS_NOT_DISABLED_ERROR_MESSAGE = """
+DJANGO_MULTISITE_PLUS_AUTO_REWRITE_DOMAINS is not False
+
+While the above setting has not been explicitly enabled, it defaults to the
+value of the DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS setting, which is currently
+set to True. This feature has been removed in a recent version of the package
+because it was leading to race conditions when updating domains in
+`multi-process` mode. You can now achieve the same effect by executing the
+`multisite_plus_rewrite_domains` management command during deployment.
+""".strip()
