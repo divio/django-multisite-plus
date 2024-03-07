@@ -48,8 +48,7 @@ class Form(forms.BaseForm):
         # createcachetable) we ignore multisite.
         # TODO: find solutions upstream in django-multisite to prevent this
         #       awkward CACHE_URL "if" situation.
-        from aldryn_addons.utils import boolean_ish
-        from aldryn_addons.utils import djsenv as env
+        from aldryn_addons.utils import djsenv as env, boolean_ish
 
         DJANGO_MODE = env("DJANGO_MODE")
         if DJANGO_MODE == "build" and settings["CACHE_URL"] == "locmem://":
@@ -115,18 +114,14 @@ class Form(forms.BaseForm):
         # multisite.middleware.DynamicSiteMiddleware must be before
         # cms.middleware.utils.ApphookReloadMiddleware
         MIDDLEWARE_CLASSES.insert(
-            MIDDLEWARE_CLASSES.index(
-                "cms.middleware.utils.ApphookReloadMiddleware"
-            ),
+            MIDDLEWARE_CLASSES.index("cms.middleware.utils.ApphookReloadMiddleware"),
             "django_multisite_plus.middlewares.DynamicSiteMiddleware",
         )
 
         # djangocms_multisite.middleware.CMSMultiSiteMiddleware must be after
         # cms.middleware.utils.ApphookReloadMiddleware
         MIDDLEWARE_CLASSES.insert(
-            MIDDLEWARE_CLASSES.index(
-                "cms.middleware.utils.ApphookReloadMiddleware"
-            )
+            MIDDLEWARE_CLASSES.index("cms.middleware.utils.ApphookReloadMiddleware")
             + 1,
             "django_multisite_plus.middlewares.CMSMultiSiteMiddleware",
         )

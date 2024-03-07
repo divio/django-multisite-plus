@@ -1,11 +1,13 @@
 import sys
+
 from imp import reload
 
 from django.conf import settings
 
 import multisite.middleware
-from djangocms_multisite import middleware
 from multisite.models import Alias
+
+from djangocms_multisite import middleware
 
 
 class CMSMultiSiteMiddleware(middleware.CMSMultiSiteMiddleware):

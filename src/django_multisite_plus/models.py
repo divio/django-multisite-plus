@@ -1,8 +1,10 @@
-import django.contrib.sites.models
-from django.conf import settings
-from django.db import models, transaction
 from django.utils.encoding import force_str
+from django.db import models, transaction
+
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+
+import django.contrib.sites.models
 
 
 def domain_for_slug(slug, domain_format=None):
@@ -42,10 +44,8 @@ class SiteManager(models.Manager):
             if site_id:
                 # A site_id was given. Use it as the primary identifier.
                 try:
-                    contrib_site = (
-                        django.contrib.sites.models.Site.objects.get(
-                            id=site_id
-                        )
+                    contrib_site = django.contrib.sites.models.Site.objects.get(
+                        id=site_id
                     )
                     contrib_site_updated_fields = set()
                     for key, value in contrib_site_defaults.items():
@@ -53,9 +53,7 @@ class SiteManager(models.Manager):
                             setattr(contrib_site, key, value)
                             contrib_site_updated_fields.add(key)
                     if contrib_site_updated_fields:
-                        contrib_site.save(
-                            update_fields=contrib_site_updated_fields
-                        )
+                        contrib_site.save(update_fields=contrib_site_updated_fields)
                     # We're not using update_or_create here to make sure
                     # last_updated_at does not get bumped if nothing changed.
                     # Otherwise uwsgi would keep reloading all wsgi processes
@@ -76,12 +74,10 @@ class SiteManager(models.Manager):
 
                 except django.contrib.sites.models.Site.DoesNotExist:
                     domain = domain_for_slug(slug)
-                    contrib_site = (
-                        django.contrib.sites.models.Site.objects.create(
-                            id=site_id,
-                            domain=domain,
-                            name=name or domain,
-                        )
+                    contrib_site = django.contrib.sites.models.Site.objects.create(
+                        id=site_id,
+                        domain=domain,
+                        name=name or domain,
                     )
                     site = Site.objects.create(
                         site=contrib_site,
@@ -115,11 +111,9 @@ class SiteManager(models.Manager):
                         site.save(update_fields=contrib_site_updated_fields)
                 else:
                     domain = domain_for_slug(slug)
-                    contrib_site = (
-                        django.contrib.sites.models.Site.objects.create(
-                            domain=domain,
-                            name=name or domain,
-                        )
+                    contrib_site = django.contrib.sites.models.Site.objects.create(
+                        domain=domain,
+                        name=name or domain,
                     )
                     site = Site.objects.create(
                         site=contrib_site,
@@ -168,8 +162,7 @@ class Site(models.Model):
         unique=True,
     )
     is_enabled = models.BooleanField(
-        default=True,
-        help_text=_("Whether this site should be served and available."),
+        default=True, help_text=_("Whether this site should be served and available.")
     )
     last_updated_at = models.DateTimeField(auto_now=True)
     extra_uwsgi_ini = models.TextField(blank=True, default="")
@@ -184,9 +177,7 @@ class Site(models.Model):
 
     @property
     def domain(self):
-        rewrite = getattr(
-            settings, "DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS", False
-        )
+        rewrite = getattr(settings, "DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS", False)
         if rewrite:
             return domain_for_slug(self.slug)
         elif not self.real_domain:
