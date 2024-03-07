@@ -3,8 +3,8 @@ Changelog
 =========
 
 
-Next version (unreleased)
-=========================
+0.7.1 (2022-06-03)
+==================
 
 * Add testing support via ``tox`` + ``docker``/``tox-docker`` + ``pytest``.
 * Move to ``src``-based project layout.
