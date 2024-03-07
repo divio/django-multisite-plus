@@ -8,29 +8,34 @@ class AppConfig(django.apps.AppConfig):
 
     def ready(self):
         from django.conf import settings
-        from django.db.utils import ProgrammingError, OperationalError
+        from django.core.exceptions import ImproperlyConfigured
 
-        Site = self.get_model("Site")
-        try:
-            if getattr(settings, "DJANGO_MULTISITE_PLUS_AUTO_POPULATE_SITES", True):
-                print("Syncing django_multisite_plus Sites based on settings")
-                Site.objects.auto_populate_sites()
+        from django_multisite_plus import constants
 
-            if getattr(settings, "DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS", True):
-                print("Rewriting django.contrib.sites.Site based on local settings")
-                Site.objects.update_sites()
-                # Make sure django-multisite is synced.
-                # Sometimes (e.g when loading fixtures) the signals don't fire and the
-                # Aliases get out of sync.
-                print("Syncing multisite.Alias based on Sites")
-                from multisite.models import Alias
+        auto_populate_sites = getattr(
+            settings, "DJANGO_MULTISITE_PLUS_AUTO_POPULATE_SITES", None
+        )
+        if auto_populate_sites is True:
+            raise ImproperlyConfigured(
+                constants.AUTO_POPULATE_EXPLICITLY_ENABLED_ERROR_MESSAGE
+            )
+        elif auto_populate_sites is None:
+            raise ImproperlyConfigured(
+                constants.AUTO_POPULATE_DEFAULT_ENABLED_ERROR_MESSAGE
+            )
 
-                Alias.canonical.sync_all()
-        except (ProgrammingError, OperationalError):
-            # ProgrammingError:
-            # database is not ready yet. Maybe we're in the migrate
-            # management command.
-            # OperationalError:
-            # Many parallel processes might have created deadlocks, e.g when
-            # starting up uwsgi with many workers.
-            pass
+        auto_rewrite_domains = getattr(
+            settings, "DJANGO_MULTISITE_PLUS_AUTO_REWRITE_DOMAINS", None
+        )
+        if auto_rewrite_domains is True:
+            raise ImproperlyConfigured(
+                constants.AUTO_REWRITE_DOMAINS_EXPLICITLY_ENABLED_ERROR_MESSAGE
+            )
+        elif auto_rewrite_domains is None:
+            rewrite_domains = getattr(
+                settings, "DJANGO_MULTISITE_PLUS_REWRITE_DOMAINS", True
+            )
+            if rewrite_domains:
+                raise ImproperlyConfigured(
+                    constants.AUTO_REWRITE_DOMAINS_NOT_DISABLED_ERROR_MESSAGE
+                )

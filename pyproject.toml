@@ -1,3 +1,11 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "setuptools_scm[toml]>=6.2",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
 [tool.coverage.run]
 branch = true
 source = ["src/django_multisite_plus", "./tests"]
@@ -11,7 +19,7 @@ source = [
 
 [tool.coverage.report]
 precision = 1
-#skip_covered = true
+skip_covered = true
 
 [tool.coverage.html]
 directory = ".artifacts/htmlcov"
@@ -21,3 +29,22 @@ skip_covered = false
 [tool.pytest.ini_options]
 pythonpath = "./tests"
 addopts = "-rxs --import-mode=importlib --cov-report= --cov=django_multisite_plus --cov=tests --cov-context=test"
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+line_length = 79
+lines_after_imports = 2
+lines_between_types = 0
+include_trailing_comma = true
+atomic = true
+order_by_type = true
+use_parentheses = true
+multi_line_output = 3
+overwrite_in_place = true
+known_django = ["django"]
+sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+[tool.setuptools_scm]
