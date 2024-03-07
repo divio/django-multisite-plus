@@ -3,12 +3,9 @@ Changelog
 =========
 
 
-0.7.1 (2022-06-03)
+0.7.2 (unreleased)
 ==================
 
-* Add testing support via ``tox`` + ``docker``/``tox-docker`` + ``pytest``.
-* Move to ``src``-based project layout.
-* Add initial compatibility with Django 2.2, 3.0, and 4.0.
 * Add linting checks for ``isort`` and ``flake8``.
 * Move to PEP-517/PEP-518 distribution format.
 * Use ``setuptools-scm`` for versioning.
@@ -16,6 +13,14 @@ Changelog
   ``DJANGO_MULTISITE_PLUS_AUTO_POPULATE_SITES`` and ``DJANGO_MULTISITE_PLUS_AUTO_REWRITE_DOMAINS``
   to ``False`` in ``settings.py``, and use the ``multisite_plus_populate_sites``
   and ``multisite_plus_rewrite_domains`` management commands instead.
+
+
+0.7.1 (2022-06-03)
+==================
+
+* Add testing support via tox + docker/tox-docker + pytest.
+* Move to ``src``-based project layout.
+* Add initial compatibility with Django 2.2, 3.0, and 4.0.
 
 
 0.6.3 (2018-10-18)
