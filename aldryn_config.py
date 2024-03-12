@@ -110,7 +110,10 @@ class Form(forms.BaseForm):
         settings["SITE_ID"] = SiteID(default=int(env("SITE_ID", 1)))
         settings["INSTALLED_APPS"].append("multisite")
 
-        MIDDLEWARE_CLASSES = settings["MIDDLEWARE_CLASSES"]
+        MIDDLEWARE_CLASSES = settings.get(
+            # Django used MIDDLEWARE_CLASSES prior to version 2.0
+            "MIDDLEWARE", settings.get("MIDDLEWARE_CLASSES")
+        )
 
         # multisite.middleware.DynamicSiteMiddleware must be before
         # cms.middleware.utils.ApphookReloadMiddleware
